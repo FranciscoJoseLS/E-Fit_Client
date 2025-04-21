@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name" translatable="false">E-Fit</string>
+    <string name="home" translatable="false">Inicio</string>
+    <string name="new_account">Crear cuenta</string>
+    <string name="forgot_password">Olvidé mi contraseña</string>
+    <string name="connection_error">Hubo un error de conexión.</string>
+
+    <string name="clear_session">Cerrar Sesión</string>
+
+    <string name="create_account">Crear cuenta</string>
+    <string name="my_info">Mis datos</string>
+    <string name="change_pasword">Cambiar contraseña</string>
+    <string name="repeat_pasword">Repita la contraseña</string>
+    <string name="fail_repeat_pasword">Las contraseñas no coinciden</string>
+    <string name="exercises">Ejericicios</string>
+
+
+    <string name="welcome">"Welcome !"</string>
+    <string name="_return">Volver</string>
+    <string name="_more">Ver Más</string>
+    <string name="_loading">Cargando ...</string>
+    <string name="_update">Actualizar</string>
+    <string name="_confirm">Confirmar</string>
+
+    <!--VALIDATIONS____________________________________________________-->
+    <!--VALIDATIONS____________________________________________________-->
+    <!--VALIDATIONS____________________________________________________-->
+    <string name="invalid_username">El usuario no existe</string>
+    <string name="invalid_empty_username">El usuario no ha sido introducido</string>
+    <string name="invalid_password">La contraseña es incorecta</string>
+    <string name="invalid_empty_password">La contraseña no ha sido introducida</string>
+    <string name="user_update_error">No se pudo actualizar el usuario</string>
+
+    <string name="action_sign_in_short">No existe el usuario</string>
+    <string name="action_sign_in">No existe el usuario</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="prompt_email">Email :</string>
+    <string name="prompt_name">Nombre :</string>
+    <string name="prompt_surname">Apellidos: </string>
+    <string name="prompt_password">Contraseña: </string>
+    <string name="login_button">Login</string>
+
+</resources>
