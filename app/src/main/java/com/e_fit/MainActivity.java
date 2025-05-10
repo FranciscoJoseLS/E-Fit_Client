@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.e_fit.api.ExerciseClient;
 import com.e_fit.ui.exercise.ExerciseList;
+import com.e_fit.ui.routine.RoutineList;
 import com.e_fit.ui.user.LoginActivity;
 import com.e_fit.ui.user.UserFormActivity;
 import com.e_fit.util.MenuActivity;
@@ -54,6 +55,6 @@ public class MainActivity extends MenuActivity {
         if(SharedPrefs.getString(this,"id","").isEmpty())
             startActivity(new Intent(this, LoginActivity.class));
         else
-            startActivity(new Intent(this, ExerciseList.class));
+            startActivity(new Intent(this, RoutineList.class));
     }
 }

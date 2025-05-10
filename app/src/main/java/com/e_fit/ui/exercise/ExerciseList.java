@@ -75,7 +75,7 @@ public class ExerciseList extends MenuActivity {
             public void onError(Exception e) {
                 runOnUiThread(() -> {
                     // Muestra un mensaje de error al usuario
-                    Toast.makeText(context, "Failed to load exercises", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Error al cargar los ejercicios", Toast.LENGTH_SHORT).show();
                 });
             }
         });

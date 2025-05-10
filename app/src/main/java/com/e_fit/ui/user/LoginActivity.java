@@ -18,6 +18,7 @@ import com.e_fit.R;
 import com.e_fit.api.UserClient;
 import com.e_fit.enities.User;
 import com.e_fit.ui.exercise.ExerciseList;
+import com.e_fit.ui.routine.RoutineList;
 import com.e_fit.util.SharedPrefs;
 
 public class LoginActivity extends AppCompatActivity {
@@ -77,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Almacenar el id en shared preference
                         SharedPrefs.saveString(c, "id", String.valueOf(user.getUserId()));
                         //  Ir al lisao de ejercicios
-                        startActivity(new Intent(c, ExerciseList.class));
+                        startActivity(new Intent(c, RoutineList.class));
                     } else {
                         tvError.setText(getString(R.string.invalid_password));
                     }

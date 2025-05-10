@@ -6,6 +6,14 @@
         android:title="@string/home"/>
 
     <item
+        android:id="@+id/itemExercise"
+        android:title="@string/exercises"/>
+
+    <item
+        android:id="@+id/itemRoutine"
+        android:title="@string/my_routines"/>
+
+    <item
         android:id="@+id/itemUser"
         android:title="@string/my_info"/>
 

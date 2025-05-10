@@ -1,10 +1,14 @@
 package com.e_fit.enities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class Routine {
+public class Routine implements Parcelable {
     private UUID routineId;
     private String name;
     private String estimatedDuration;
@@ -16,6 +20,7 @@ public class Routine {
     private Set<Score> scores = new HashSet<>();
 
     public Routine() {}
+
     public Routine(String name, String estimatedDuration, Integer defaultDays, String description, Boolean active) {
         this.name = name;
         this.estimatedDuration = estimatedDuration;
@@ -23,6 +28,7 @@ public class Routine {
         this.description = description;
         this.active = active;
     }
+
     public Routine(String name, String estimatedDuration, Integer defaultDays, String description, Boolean active, User user) {
         this.name = name;
         this.estimatedDuration = estimatedDuration;
@@ -30,6 +36,31 @@ public class Routine {
         this.description = description;
         this.active = active;
         this.user = user;
+    }
+
+    protected Routine(Parcel in) {
+        long mostSigBits = in.readLong();
+        long leastSigBits = in.readLong();
+        routineId = new UUID(mostSigBits, leastSigBits);
+        name = in.readString();
+        estimatedDuration = in.readString();
+        if (in.readByte() == 0) {
+            defaultDays = null;
+        } else {
+            defaultDays = in.readInt();
+        }
+        description = in.readString();
+        byte activeVal = in.readByte();
+        active = activeVal == 0 ? null : activeVal == 1;
+        user = in.readParcelable(User.class.getClassLoader());
+        //Cargar las listas de la rutina
+        ArrayList<ExerciseRoutine> exerciseRoutineList = new ArrayList<>();
+        in.readList(exerciseRoutineList, ExerciseRoutine.class.getClassLoader());
+        exerciseRoutines = new HashSet<>(exerciseRoutineList);
+
+        ArrayList<Score> scoreList = new ArrayList<>();
+        in.readList(scoreList, Score.class.getClassLoader());
+        scores = new HashSet<>(scoreList);
     }
 
     public UUID getRoutineId() {
@@ -115,4 +146,40 @@ public class Routine {
                 ", active=" + active +
                 '}';
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(routineId.getMostSignificantBits());
+        dest.writeLong(routineId.getLeastSignificantBits());
+        dest.writeString(name);
+        dest.writeString(estimatedDuration);
+        if (defaultDays == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(defaultDays);
+        }
+        dest.writeString(description);
+        dest.writeByte((byte) (active == null ? 0 : active ? 1 : 2));
+        dest.writeParcelable((Parcelable) user, flags);
+        dest.writeList(new ArrayList<>(exerciseRoutines));
+        dest.writeList(new ArrayList<>(scores));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Routine> CREATOR = new Creator<Routine>() {
+        @Override
+        public Routine createFromParcel(Parcel in) {
+            return new Routine(in);
+        }
+
+        @Override
+        public Routine[] newArray(int size) {
+            return new Routine[size];
+        }
+    };
 }

@@ -69,7 +69,7 @@ public class ExerciseClient {
             if (!exercise.isEmpty()) {
                 callback.onExercisesReceived(exercise);
             } else {
-                callback.onError(new Exception("Failed to retrieve exercise"));
+                callback.onError(new Exception("Error al cargar los ejercicios"));
             }
         }
     }

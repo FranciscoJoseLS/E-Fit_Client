@@ -21,7 +21,8 @@
     <string name="_loading">Cargando ...</string>
     <string name="_update">Actualizar</string>
     <string name="_confirm">Confirmar</string>
-
+    <string name="_delete">Eliminar</string>
+    <string name="_new">Crear</string>
     <!--VALIDATIONS____________________________________________________-->
     <!--VALIDATIONS____________________________________________________-->
     <!--VALIDATIONS____________________________________________________-->
@@ -38,6 +39,14 @@
     <string name="prompt_name">Nombre :</string>
     <string name="prompt_surname">Apellidos: </string>
     <string name="prompt_password">Contraseña: </string>
+    <string name="prompt_duration">Duración estimada (h:mm) </string>
+    <string name="prompt_description">Descripción: </string>
+    <string name="prompt_def_day">Dia de la semana por defecto </string>
     <string name="login_button">Login</string>
+    <string name="routines">rutinas</string>
+    <string name="my_routines">Mis rutinas</string>
+    <string name="fail_load_routine">Error al cargar rutinas</string>
+    <string name="empty_routines">No se ha creado ninguna rutina</string>
+    <string name="AddExercises">Cargar Ejercios</string>
 
 </resources>

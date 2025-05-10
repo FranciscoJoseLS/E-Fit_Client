@@ -70,7 +70,7 @@ public class UserClient {
             if (user != null) {
                 callback.onUserReceived(user);
             } else {
-                callback.onError(new Exception("Failed to retrieve user"));
+                callback.onError(new Exception("Error al cargar el usuario"));
             }
         }
     }
@@ -115,7 +115,7 @@ public class UserClient {
             if (success) {
                 callback.onUserSent();
             } else {
-                callback.onError(new Exception("Failed to create user"));
+                callback.onError(new Exception("Error al crear el usuario"));
             }
         }
     }
@@ -161,7 +161,7 @@ public class UserClient {
             if (success) {
                 callback.onUserSent();
             } else {
-                callback.onError(new Exception("Failed to send user data"));
+                callback.onError(new Exception("Error al enviar la información"));
             }
         }
     }
