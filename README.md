@@ -1,4 +1,4 @@
-# 🏋️‍♂️ e-fit
+# 🏋️‍♂️ E-Fit
 
 **e-fit** es una aplicación diseñada para ayudarte a llevar un control completo de tus entrenamientos. 
 Crea tus propias rutinas, sigue tu progreso y mantén tu motivación alta mientras alcanzas tus objetivos de fitness.
