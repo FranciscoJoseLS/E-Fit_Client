@@ -3,50 +3,64 @@ package com.e_fit.ui.routine;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.e_fit.R;
-import com.e_fit.api.RoutineClient;
-import com.e_fit.api.UserClient;
+import com.e_fit.api.RoutineClient; // Importa la clase RoutineClient
+import com.e_fit.enities.ExerciseRoutine;
 import com.e_fit.enities.Routine;
-import com.e_fit.enities.User;
 import com.e_fit.util.MenuActivity;
 import com.e_fit.util.SharedPrefs;
 
-import java.text.Normalizer;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class RoutineView extends MenuActivity {
 
-    private EditText etName, etEstimatedDuration, etDefaultDays, etDescription;
+    private EditText etName, etEstimatedDuration, etDescription;
     private TextView tvTitle;
     private Button btnCreate, btnReturn, btnAddExercises, btnRemove;
     private Routine routine;
     private RoutineClient client;
     private boolean isEditMode;
+    private Spinner spDay;
+    private RecyclerView rvExercises;
+    private ExerciseRoutineAdapter exerciseAdapter;
     private Context context;
+    private String routineId;
+    String[] daysOfWeek = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_routine_view);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         loadElements();
         loadRoutineData();
     }
@@ -54,7 +68,9 @@ public class RoutineView extends MenuActivity {
     private void loadElements() {
         etName = findViewById(R.id.etName);
         etEstimatedDuration = findViewById(R.id.etEstimatedDuration);
-        etDefaultDays = findViewById(R.id.etDefaultDays);
+        spDay = findViewById(R.id.spDay);
+        rvExercises = findViewById(R.id.rvExercises);
+        rvExercises.setLayoutManager(new LinearLayoutManager(this));
         etDescription = findViewById(R.id.etDescription);
         btnCreate = findViewById(R.id.btnCreate);
         btnReturn = findViewById(R.id.btnReturn);
@@ -63,17 +79,36 @@ public class RoutineView extends MenuActivity {
         client = new RoutineClient();
         context = this;
 
-        btnReturn.setOnClickListener(i->{
-            super.onBackPressed();
-        });
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, daysOfWeek) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                TextView view = (TextView) super.getView(position, convertView, parent);
+                view.setTextColor(ContextCompat.getColor(RoutineView.this, R.color.black_3));
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                TextView view = (TextView) super.getDropDownView(position, convertView, parent);
+                view.setTextColor(ContextCompat.getColor(RoutineView.this, R.color.white));
+                return view;
+            }
+        };
+        spDay.setAdapter(adapter);
+
+        btnReturn.setOnClickListener(i -> super.onBackPressed());
 
         btnCreate.setOnClickListener(v -> {
-            if (isEditMode) updateRoutine(); else createRoutine();
+            if (isEditMode) updateRoutine();
+            else createRoutine();
         });
 
-        btnRemove.setOnClickListener(v -> {
-            deleteRoutine();
+        btnAddExercises.setOnClickListener(v -> {
+            Intent i = new Intent(this, ExerciseSetterList.class);
+            i.putExtra("routine", routine);
+            startActivity(i);
         });
+        btnRemove.setOnClickListener(v -> deleteRoutine());
     }
 
     private void loadRoutineData() {
@@ -85,60 +120,45 @@ public class RoutineView extends MenuActivity {
             tvTitle.setText(routine.getName());
             etName.setVisibility(View.GONE);
             etEstimatedDuration.setText(routine.getEstimatedDuration());
-            etDefaultDays.setText(String.valueOf(routine.getDefaultDays()));
             etDescription.setText(routine.getDescription());
             btnCreate.setText(R.string._update);
-            //Comprobar los ejercicios de la rutina
-            if(routine.getExerciseRoutines().isEmpty()) {
-                //LISTAR EJERCICIOS RUTINAS
+            routineId = routine.getRoutineId().toString();
+            int defaultDay = routine.getDefaultDays();
+            spDay.setSelection(defaultDay - 1);
 
-            }else{
-                btnAddExercises.setVisibility(View.GONE);
-            }
+            // Inicializa el adapter *aquí*, pero con una lista vacía.
+            //Los datos llegarán asíncronamente.
+            exerciseAdapter = new ExerciseRoutineAdapter(this, new ArrayList<>());
+            rvExercises.setAdapter(exerciseAdapter);
+            // Lógica para mostrar/ocultar el botón basada en si hay ejercicios
+            fetchExercisesForRoutine(routineId);
+
         } else {
             btnRemove.setVisibility(View.GONE);
             btnCreate.setText(R.string._new);
-            btnAddExercises.setVisibility(View.GONE);
-
-
-            etName.setText("Name Test");
-            etEstimatedDuration.setText("1:23");
-            etDefaultDays.setText("Lunes");
-            etDescription.setText("DESCRIPTION TEST");
+            btnAddExercises.setVisibility(View.VISIBLE); // Siempre mostrar en modo creación
         }
     }
 
     private void createRoutine() {
         String name = etName.getText().toString().trim();
         String estimatedDuration = etEstimatedDuration.getText().toString().trim();
-        String defaultDaysStr = etDefaultDays.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
 
-        if (name.isEmpty() || estimatedDuration.isEmpty() || defaultDaysStr.isEmpty() || description.isEmpty()) {
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(estimatedDuration) || TextUtils.isEmpty(description)) {
             Toast.makeText(this, "Debe rellenar todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(!isValidTimeFormat(estimatedDuration)){
+        if (!isValidTimeFormat(estimatedDuration)) {
             Toast.makeText(this, "La duración estimada debe de ser 'h:mm'", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        int defaultDays;
-        switch (normalizeString(defaultDaysStr)) {
-            case "lunes":defaultDays = 1;break;
-            case "martes":defaultDays = 2;break;
-            case "miercoles":defaultDays = 3;break;
-            case "jueves":defaultDays = 4;break;
-            case "viernes":defaultDays = 5;break;
-            case "sabado":defaultDays = 6;break;
-            case "domingo":defaultDays = 7;break;
-            default:defaultDays = 0;break;
-        }
+        int selectedDay = spDay.getSelectedItemPosition() + 1;
 
-        // Crear una nueva rutina con los datos ingresados
-        Routine newRoutine = new Routine(name, estimatedDuration, defaultDays, description, true);
-        client.createRoutine(newRoutine,SharedPrefs.getString(this, "id", ""), new RoutineClient.RoutineOperationCallback() {
+        Routine newRoutine = new Routine(name, estimatedDuration, selectedDay, description, true);
+        client.createRoutine(newRoutine, SharedPrefs.getString(this, "id", ""), new RoutineClient.RoutineOperationCallback() { // Usa RoutineClient
             @Override
             public void onSuccess() {
                 Toast.makeText(context, "La rutina ha sido creada", Toast.LENGTH_SHORT).show();
@@ -154,53 +174,40 @@ public class RoutineView extends MenuActivity {
 
     private void updateRoutine() {
         String estimatedDuration = etEstimatedDuration.getText().toString().trim();
-        String defaultDaysStr = etDefaultDays.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
 
-        if (estimatedDuration.isEmpty() || defaultDaysStr.isEmpty() || description.isEmpty()) {
+        if (TextUtils.isEmpty(estimatedDuration) || TextUtils.isEmpty(description)) {
             Toast.makeText(this, "Debe rellenar todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        int defaultDays;
-        switch (normalizeString(defaultDaysStr)) {
-            case "lunes":defaultDays = 1;break;
-            case "martes":defaultDays = 2;break;
-            case "miercoles":defaultDays = 3;break;
-            case "jueves":defaultDays = 4;break;
-            case "viernes":defaultDays = 5;break;
-            case "sabado":defaultDays = 6;break;
-            case "domingo":defaultDays = 7;break;
-            default:defaultDays = 0;break;
-        }
+        int selectedDay = spDay.getSelectedItemPosition() + 1;
 
-        // Actualizar la rutina existente con los nuevos datos ingresados
         routine.setEstimatedDuration(estimatedDuration);
-        routine.setDefaultDays(defaultDays);
+        routine.setDefaultDays(selectedDay);
         routine.setDescription(description);
-        Context context = this;
 
-        client.updateRoutine(routine,SharedPrefs.getString(this, "id", ""),  new RoutineClient.RoutineOperationCallback() {
+        client.updateRoutine(routine, SharedPrefs.getString(this, "id", ""), new RoutineClient.RoutineOperationCallback() {  // Usa RoutineClient
             @Override
             public void onSuccess() {
                 Toast.makeText(context, "La rutina ha sido actualizada", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(context,RoutineList.class));
+                startActivity(new Intent(context, RoutineList.class));
             }
 
             @Override
             public void onError(Exception e) {
-                Toast.makeText(context, "Error actualizar la rutina", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Error al actualizar la rutina", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void deleteRoutine() {
         routine.setActive(false);
-        client.updateRoutine(routine, SharedPrefs.getString(this, "id", ""), new RoutineClient.RoutineOperationCallback() {
+        client.updateRoutine(routine, SharedPrefs.getString(this, "id", ""), new RoutineClient.RoutineOperationCallback() { // Usa RoutineClient
             @Override
             public void onSuccess() {
                 Toast.makeText(context, "La rutina ha sido eliminada", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(context,RoutineList.class));
+                startActivity(new Intent(context, RoutineList.class));
             }
 
             @Override
@@ -210,16 +217,34 @@ public class RoutineView extends MenuActivity {
         });
     }
 
-    public static String normalizeString(String input) {
-        // Eliminar acentos y coincidencia de mayusculas
-        String lowerCase = input.toLowerCase();
-        String normalized = Normalizer.normalize(lowerCase, Normalizer.Form.NFD)
-                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-        return normalized;
-    }
     public static boolean isValidTimeFormat(String input) {
         String regex = "^\\d+:\\d{2}$";
         return Pattern.matches(regex, input);
     }
 
+    private void fetchExercisesForRoutine(String routineId) {
+        client.getExercisesForRoutine(routineId, new RoutineClient.ExerciseRoutinesCallback() { // Usa RoutineClient
+            @Override
+            public void onExerciseRoutinesReceived(List<ExerciseRoutine> exerciseRoutinesList) {
+                // Actualizar la lista de ejercicios y notificar al adaptador
+                if (exerciseAdapter != null) {
+                    exerciseAdapter.setExerciseRoutines(exerciseRoutinesList);
+                    exerciseAdapter.notifyDataSetChanged();
+                } else {
+                    Log.e("RoutineView", "exerciseAdapter is null in fetchExercisesForRoutine");
+                }
+                // Mostrar el botón si la lista está vacía, ocultar si no.
+                btnAddExercises.setVisibility(exerciseRoutinesList.isEmpty() ? View.VISIBLE : View.GONE);
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+                // Manejar el error al obtener los ejercicios
+                Toast.makeText(RoutineView.this, "Error al obtener ejercicios", Toast.LENGTH_SHORT).show();
+                // Considerar mostrar el botón de añadir ejercicios aquí también, dependiendo de la lógica de la app.
+                btnAddExercises.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 }

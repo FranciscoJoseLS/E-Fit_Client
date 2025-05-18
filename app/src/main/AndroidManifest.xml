@@ -15,6 +15,12 @@
         android:theme="@style/Theme.EFit"
         tools:targetApi="31">
         <activity
+            android:name=".ui.routine.ExerciseSetterForm"
+            android:exported="false" />
+        <activity
+            android:name=".ui.routine.ExerciseSetterList"
+            android:exported="false" />
+        <activity
             android:name=".ui.routine.RoutineView"
             android:exported="false" />
         <activity

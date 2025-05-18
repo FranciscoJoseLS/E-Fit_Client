@@ -90,6 +90,12 @@ public class ExerciseRoutine implements Parcelable {
         this.rest = rest;
     }
 
+    public String getParsedRest() {
+        long minutes = this.rest / 60;
+        long seconds = this.rest % 60;
+        return String.format("%d''%02d'", minutes, seconds);
+    }
+
     public int getSuperSerie() {
         return superSerie;
     }

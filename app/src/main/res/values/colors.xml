@@ -11,6 +11,7 @@
     <color name="black_1">#141414</color>
     <color name="black_2">#282828</color>
     <color name="black_3">#000014</color>
+    <color name="black_transparent">#28282828</color>
     <color name="white">#f0f0f0</color>
     <color name="green">#649225</color>
     <color name="red">#8E0C0C</color>

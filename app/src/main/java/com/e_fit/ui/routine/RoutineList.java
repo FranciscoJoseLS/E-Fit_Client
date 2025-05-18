@@ -66,8 +66,7 @@ public class RoutineList extends MenuActivity {
                 routines.clear();
                 routines.addAll(retrievedRoutines);
                 runOnUiThread(() -> {
-                    routines.addAll(retrievedRoutines);
-                    loadRoutines();
+                    loadRoutines(); // Llamada correcta a loadRoutines
                 });
             }
 

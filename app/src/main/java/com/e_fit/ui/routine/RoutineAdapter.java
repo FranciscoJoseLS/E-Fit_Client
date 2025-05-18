@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 public class RoutineAdapter extends ArrayAdapter<Routine> {
     private ArrayList<Routine> routines;
+    String[] daysOfWeek = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
 
     public RoutineAdapter(Context c, ArrayList<Routine> routines) {
         super(c, R.layout.routine_item_view, routines);
@@ -38,7 +39,12 @@ public class RoutineAdapter extends ArrayAdapter<Routine> {
         tvName.setText(routines.get(posicion).getName());
 
         TextView tvDay = view.findViewById(R.id.tvDay);
-        tvDay.setText(String.valueOf(routines.get(posicion).getDefaultDays())); // Convertir entero a cadena
+        int defaultDays = routines.get(posicion).getDefaultDays();
+        if (defaultDays >= 1 && defaultDays <= 7) {
+            String dayName = daysOfWeek[defaultDays - 1];
+            tvDay.setText(dayName);
+        } else
+            tvDay.setVisibility(View.GONE);
 
         TextView tvDescription = view.findViewById(R.id.tvDescription);
         tvDescription.setText(routines.get(posicion).getDescription());

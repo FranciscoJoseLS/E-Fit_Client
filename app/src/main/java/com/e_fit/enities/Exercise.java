@@ -3,6 +3,7 @@ package com.e_fit.enities;
 import android.os.Parcel;
 import android.os.Parcelable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Exercise implements Parcelable {
@@ -113,4 +114,16 @@ public class Exercise implements Parcelable {
             return new Exercise[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Exercise exercise = (Exercise) o;
+        return Objects.equals(exerciseId, exercise.exerciseId) && Objects.equals(name, exercise.name) && muscularGroup == exercise.muscularGroup && Objects.equals(description, exercise.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(exerciseId, name, muscularGroup, description);
+    }
 }

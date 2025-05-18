@@ -10,11 +10,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.e_fit.api.ExerciseClient;
-import com.e_fit.ui.exercise.ExerciseList;
 import com.e_fit.ui.routine.RoutineList;
 import com.e_fit.ui.user.LoginActivity;
-import com.e_fit.ui.user.UserFormActivity;
 import com.e_fit.util.MenuActivity;
 import com.e_fit.util.SharedPrefs;
 
