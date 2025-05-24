@@ -78,6 +78,7 @@ public class RoutineView extends MenuActivity {
         btnRemove = findViewById(R.id.btnRemove);
         client = new RoutineClient();
         context = this;
+        btnAddExercises.setVisibility(View.GONE);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, daysOfWeek) {
             @Override
@@ -136,7 +137,6 @@ public class RoutineView extends MenuActivity {
         } else {
             btnRemove.setVisibility(View.GONE);
             btnCreate.setText(R.string._new);
-            btnAddExercises.setVisibility(View.VISIBLE); // Siempre mostrar en modo creación
         }
     }
 

@@ -1,7 +1,6 @@
 package com.e_fit.api;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,7 +15,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.json.JSONObject;
 import org.json.JSONException;
-
+import org.json.JSONArray;
+import java.util.List;
 public class ExerciseRoutineClient {
 
     private String BASE_URL;
@@ -36,8 +36,8 @@ public class ExerciseRoutineClient {
         void onError(Exception e);
     }
 
-    public void postExerciseRoutine(Long exerciseId, String routineId, int nSets, Long rest, int superSerie, String exerciseType, int ordered, PostExerciseRoutineCallback callback) {
-        new PostExerciseRoutineTask(exerciseId, routineId, nSets, rest, superSerie, exerciseType, ordered, callback).execute();
+    public void postExerciseRoutine(Long exerciseId, String routineId, int nSets, Long rest, int superSerie, String exerciseType, int ordered, List<String> setTypes, PostExerciseRoutineCallback callback) {
+        new PostExerciseRoutineTask(exerciseId, routineId, nSets, rest, superSerie, exerciseType, ordered, setTypes, callback).execute();
     }
 
     private class PostExerciseRoutineTask extends AsyncTask<Void, Void, Boolean> {
@@ -48,9 +48,10 @@ public class ExerciseRoutineClient {
         private final int superSerie;
         private final String exerciseType;
         private final int ordered;
+        private final List<String> setTypes;
         private final PostExerciseRoutineCallback callback;
 
-        public PostExerciseRoutineTask(Long exerciseId, String routineId, int nSets, Long rest, int superSerie, String exerciseType, int ordered, PostExerciseRoutineCallback callback) {
+        public PostExerciseRoutineTask(Long exerciseId, String routineId, int nSets, Long rest, int superSerie, String exerciseType, int ordered, List<String> setTypes, PostExerciseRoutineCallback callback) {
             this.exerciseId = exerciseId;
             this.routineId = routineId;
             this.nSets = nSets;
@@ -58,6 +59,7 @@ public class ExerciseRoutineClient {
             this.superSerie = superSerie;
             this.exerciseType = exerciseType;
             this.ordered = ordered;
+            this.setTypes = setTypes;
             this.callback = callback;
         }
 
@@ -73,9 +75,13 @@ public class ExerciseRoutineClient {
                 jsonBody.put("superSerie", superSerie);
                 jsonBody.put("exerciseType", exerciseType);
                 jsonBody.put("ordered", ordered);
-
-
-                Log.d("JSON", jsonBody.toString()); // Importante: Imprime el JSON *antes* de enviarlo
+                JSONArray jsonSetTypes = new JSONArray();
+                if (this.setTypes != null) {
+                    for (String type : this.setTypes) {
+                        jsonSetTypes.put(type);
+                    }
+                }
+                jsonBody.put("setTypes", jsonSetTypes);
 
                 MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
                 RequestBody body = RequestBody.create(mediaType, jsonBody.toString());

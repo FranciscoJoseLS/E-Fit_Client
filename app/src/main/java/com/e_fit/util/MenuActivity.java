@@ -9,6 +9,7 @@ import com.e_fit.MainActivity;
 import com.e_fit.R;
 import com.e_fit.ui.exercise.ExerciseList;
 import com.e_fit.ui.routine.RoutineList;
+import com.e_fit.ui.training.RoutineSelector;
 import com.e_fit.ui.user.UserFormActivity;
 
 public class MenuActivity extends AppCompatActivity {
@@ -37,6 +38,9 @@ public class MenuActivity extends AppCompatActivity {
             return true;
         }else if(item.getItemId()==R.id.itemRoutine){
             startActivity(new Intent(this, RoutineList.class));
+            return true;
+        }else if(item.getItemId()==R.id.itemTraining){
+            startActivity(new Intent(this, RoutineSelector.class));
             return true;
         }else
             return false;

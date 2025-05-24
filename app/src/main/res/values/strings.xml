@@ -8,6 +8,7 @@
     <string name="clear_session">Cerrar Sesión</string>
 
     <string name="create_account">Crear cuenta</string>
+    <string name="training">Entrenar</string>
     <string name="my_info">Mis datos</string>
     <string name="change_pasword">Cambiar contraseña</string>
     <string name="repeat_pasword">Repita la contraseña</string>
@@ -30,6 +31,7 @@
     <string name="_confirm">Confirmar</string>
     <string name="_delete">Eliminar</string>
     <string name="_new">Crear</string>
+    <string name="_done">Hecho</string>
     <!--VALIDATIONS____________________________________________________-->
     <!--VALIDATIONS____________________________________________________-->
     <!--VALIDATIONS____________________________________________________-->
@@ -47,6 +49,8 @@
     <string name="prompt_surname">Apellidos: </string>
     <string name="prompt_password">Contraseña: </string>
     <string name="prompt_duration">Duración estimada (h:mm) </string>
+    <string name="prompt_duration_short">(h:mm) </string>
+    <string name="prompt_comment">Introduzca un comentario </string>
     <string name="prompt_description">Descripción: </string>
     <string name="prompt_def_day">Dia de la semana por defecto </string>
     <string name="login_button">Login</string>

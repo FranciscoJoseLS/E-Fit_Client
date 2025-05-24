@@ -92,7 +92,6 @@ public class ExerciseSetterForm extends AppCompatActivity {
 
     private void addExercises() {
         ExerciseRoutineSetterAdapter adapter = (ExerciseRoutineSetterAdapter) rvExercises.getAdapter();
-        List<ExerciseRoutine> exerciseRoutines = new ArrayList<>();
 
         for (int i = 0; i < adapter.getItemCount(); i++) {
             RecyclerView.ViewHolder viewHolder = rvExercises.findViewHolderForAdapterPosition(i);
@@ -108,14 +107,18 @@ public class ExerciseSetterForm extends AppCompatActivity {
 
                 // Crear una lista de tipos de series seleccionados en los Spinners
                 List<SetTypeParcelable> setTypesParcelable = new ArrayList<>();
+                List<String> setTypeNamesForApi = new ArrayList<>(); // This list will hold the string names
+
                 for (int j = 0; j < holder.spinnerContainer.getChildCount(); j++) {
                     View view = holder.spinnerContainer.getChildAt(j);
                     if (view instanceof Spinner) {
                         Spinner spinner = (Spinner) view;
                         SetType setType = (SetType) spinner.getSelectedItem();
-                        // Aqui convierto 'setType' a 'SetTypeParcelable'
+
                         SetTypeParcelable setTypeParcelable = new SetTypeParcelable(setType);
                         setTypesParcelable.add(setTypeParcelable);
+
+                        if (setType != null) setTypeNamesForApi.add(setType.name());
                     }
                 }
 
@@ -124,40 +127,36 @@ public class ExerciseSetterForm extends AppCompatActivity {
                         .filter(e->e.getName().equals(exerciseName))
                         .findFirst().orElse(null);
 
-                // Crear un objeto ExerciseRoutine con los datos recogidos
-                ExerciseRoutine exerciseRoutine= new ExerciseRoutine(exercise, routine, numberOfSets, restTime, isSuperSet, exerciseType, i, setTypesParcelable);
-                exerciseRoutines.add(exerciseRoutine);
+                client.postExerciseRoutine(
+                        exercise.getExerciseId(),
+                        routine.getRoutineId().toString(),
+                        numberOfSets,
+                        restTime,
+                        isSuperSet,
+                        exerciseType.toString().toUpperCase(),
+                        i,
+                        setTypeNamesForApi,
+                        new ExerciseRoutineClient.PostExerciseRoutineCallback() {
+                            @Override
+                            public void onExerciseRoutinePosted(boolean success) {
+                                if (success) {
+                                    Toast.makeText(ExerciseSetterForm.this, "El ejercicio se asoció correctamente a esta rutina", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(ExerciseSetterForm.this, RoutineList.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(ExerciseSetterForm.this, "No se pudo asociar el ejercicio a esta rutina", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Toast.makeText(ExerciseSetterForm.this, "No se pudo asociar el ejercicio a esta rutina", Toast.LENGTH_SHORT).show();
+                                Log.e("ExerciseSetterForm", "Error posting exercise routine: " + e.getMessage(), e);
+                            }
+                        }
+                );
             }
         }
-
-        //Almaceno el ArrayList en la base de datos
-        for (var e : exerciseRoutines) {
-            client.postExerciseRoutine(
-                    e.getExercise().getExerciseId(),
-                    routine.getRoutineId().toString(),
-                    e.getnSets(),
-                    e.getRest(),
-                    e.getSuperSerie(),
-                    e.getExerciseType().toString().toUpperCase(),
-                    e.getOrdered(),
-                    new ExerciseRoutineClient.PostExerciseRoutineCallback() {
-                        @Override
-                        public void onExerciseRoutinePosted(boolean success) {
-                            if (success) {
-                                Toast.makeText(ExerciseSetterForm.this, "El ejercicio se asoció correctamente a esta rutina", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(ExerciseSetterForm.this, RoutineList.class));
-                            } else
-                                Toast.makeText(ExerciseSetterForm.this, "No se pudo asociar el ejercicio a esta rutina", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Toast.makeText(ExerciseSetterForm.this, "No se pudo asociar el ejercicio a esta rutina", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-            );
-        }
-
     }
 
     public Long parseRestTimeToSeconds(String restTime) {

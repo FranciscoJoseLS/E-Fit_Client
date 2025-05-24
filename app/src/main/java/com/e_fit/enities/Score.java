@@ -23,6 +23,13 @@ public class Score {
         this.loadValue = load;
     }
 
+    public Score(Exercise exercise, Routine routine, String comments, String load) {
+        this.exercise = exercise;
+        this.routine = routine;
+        this.comments = comments;
+        this.loadValue = load;
+    }
+
     public UUID getScoreId() {
         return scoreId;
     }
