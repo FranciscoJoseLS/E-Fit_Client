@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -126,11 +127,12 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvScores"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:padding="2dp"
-                    android:text="@string/_done"
+                    android:text="@string/scores"
                     android:textAlignment="center"
                     android:textColor="@color/green"
                     android:textSize="15sp"

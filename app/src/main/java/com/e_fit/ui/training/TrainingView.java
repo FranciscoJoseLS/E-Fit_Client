@@ -96,7 +96,9 @@ public class TrainingView extends AppCompatActivity implements OnSetCheckedListe
             tvDuration.setText(routine.getEstimatedDuration());
             tvDescription.setText(routine.getDescription());
             routineId = routine.getRoutineId().toString();
-            tvDay.setText(daysOfWeek[routine.getDefaultDays()].toString());
+            int defaultDay = routine.getDefaultDays();
+            if (defaultDay >= 1 && defaultDay <= daysOfWeek.length)
+                tvDay.setText(daysOfWeek[defaultDay - 1]);
 
             trainingAdapter = new TrainingAdapter(this, new ArrayList<>(), this);
             rvExercises.setAdapter(trainingAdapter);

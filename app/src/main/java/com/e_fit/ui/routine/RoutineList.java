@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -75,6 +76,7 @@ public class RoutineList extends MenuActivity {
                 runOnUiThread(() -> {
                     // Muestra un mensaje de error al usuario
                     Toast.makeText(context, "Error al cargar las rutinas", Toast.LENGTH_SHORT).show();
+                    tvLoading.setVisibility(View.GONE);
                 });
             }
         });
@@ -88,6 +90,10 @@ public class RoutineList extends MenuActivity {
 
         if (filteredRoutines.isEmpty()) {
             tvLoading.setText(R.string.empty_routines);
+            //Ajusto el texto de no rutinas disponibles
+            ViewGroup.LayoutParams params = tvLoading.getLayoutParams();
+           params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            tvLoading.setLayoutParams(params);
         } else {
             tvLoading.setVisibility(View.GONE);
             // Pasar rutinas activas al adapter

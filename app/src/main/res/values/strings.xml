@@ -40,10 +40,11 @@
     <string name="invalid_password">La contraseña es incorecta</string>
     <string name="invalid_empty_password">La contraseña no ha sido introducida</string>
     <string name="user_update_error">No se pudo actualizar el usuario</string>
-
+    <string name="empty_scores">No hay marcas asociadas a este ejercicio</string>
     <string name="action_sign_in_short">No existe el usuario</string>
     <string name="action_sign_in">No existe el usuario</string>
     <string name="login">Iniciar Sesión</string>
+    <string name="scores">Marcas</string>
     <string name="prompt_email">Email :</string>
     <string name="prompt_name">Nombre :</string>
     <string name="prompt_surname">Apellidos: </string>

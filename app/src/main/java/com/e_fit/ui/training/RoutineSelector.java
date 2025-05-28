@@ -36,6 +36,7 @@ public class RoutineSelector extends MenuActivity {
     private ArrayList<Routine> routines;
     private TextView tvLoading;
     private ListView lvRoutines;
+    private Button btnNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,8 @@ public class RoutineSelector extends MenuActivity {
         routines = new ArrayList<>();
         tvLoading = findViewById(R.id.tvLoading);
         lvRoutines = findViewById(R.id.lvRoutines);
+        btnNew = findViewById(R.id.btnNew);
+        btnNew.setVisibility(View.GONE);
         loadData();
     }
 
@@ -76,8 +79,13 @@ public class RoutineSelector extends MenuActivity {
                 runOnUiThread(() -> {
                     // Muestra un mensaje de error al usuario
                     Toast.makeText(context, "Error al cargar las rutinas", Toast.LENGTH_SHORT).show();
+                    tvLoading.setVisibility(View.GONE);
                 });
             }
+        });
+        // Habilitar el botón
+        btnNew.setOnClickListener(i -> {
+            startActivity(new Intent(this, RoutineView.class));
         });
     }
 
@@ -89,6 +97,7 @@ public class RoutineSelector extends MenuActivity {
 
         if (filteredRoutines.isEmpty()) {
             tvLoading.setText(R.string.empty_routines);
+            btnNew.setVisibility(View.VISIBLE);
         } else {
             // Si la rutina corresponde al dia actual la pongo al principo
             int currentDayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)-1;

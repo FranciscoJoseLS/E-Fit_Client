@@ -1,6 +1,7 @@
 package com.e_fit.ui.training;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -8,17 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.e_fit.R;
+import com.e_fit.api.ScoreClient;
 import com.e_fit.enities.ExerciseRoutine;
 import com.e_fit.enities.ExerciseType;
+import com.e_fit.enities.Score;
+import com.e_fit.util.SharedPrefs;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,11 +77,11 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName;
         EditText tvComments;
-        TextView tvCronometer;
+        TextView tvCronometer, tvScore;
         RecyclerView lvSets;
         ProgressBar pbCronometer;
         LinearLayout llCronometer;
-        View view;
+        CardView card;
 
         @SuppressLint("ResourceAsColor")
         public ViewHolder(@NonNull View itemView) {
@@ -84,7 +92,8 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHo
             pbCronometer = itemView.findViewById(R.id.pbCronometer);
             llCronometer = itemView.findViewById(R.id.llCronometer);
             tvCronometer = itemView.findViewById(R.id.tvCronometer);
-            view = itemView;
+            tvScore = itemView.findViewById(R.id.tvScores);
+            card = itemView.findViewById(R.id.card);
         }
     }
 
@@ -96,15 +105,15 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TrainingAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TrainingAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         ExerciseRoutine exercise = exerciseList.get(position);
         if (exercise.getExerciseType() != ExerciseType.LIBRE)
             holder.tvName.setText(String.format("%s en %s", exercise.getExercise().getName(), exercise.getExerciseType().toString()));
         else
             holder.tvName.setText(exercise.getExercise().getName());
 
-        if(exerciseList.get(position).getSuperSerie()==0)
-            holder.view.setBackgroundColor(ContextCompat.getColor(context, R.color.black_0));
+        if(exerciseList.get(position).getSuperSerie()==1)
+            holder.card.setBackgroundColor(ContextCompat.getColor(context, R.color.black_0));
         long restSeconds = exercise.getRest() != null ? exercise.getRest() : 0L;
         holder.pbCronometer.setMax((int) restSeconds);
 
@@ -120,6 +129,13 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHo
             holder.pbCronometer.setProgress((int) restSeconds);
         }
 
+        holder.tvScore.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                showScoresDialog(position);
+                return true;
+            }
+        });
         holder.lvSets.setLayoutManager(new LinearLayoutManager(context));
         holder.lvSets.setAdapter(new SetAdapter(context, exercise.getSetTypes(), TrainingAdapter.this, position));
     }
@@ -218,4 +234,43 @@ public class TrainingAdapter extends RecyclerView.Adapter<TrainingAdapter.ViewHo
         long seconds = rest % 60;
         return String.format("%02d:%02d", minutes, seconds);
     }
+
+    private void showScoresDialog(int exercisePosition) {
+        ExerciseRoutine currentExercise = exerciseList.get(exercisePosition);
+        // Inflo la vista personalizada
+        LayoutInflater inflater = LayoutInflater.from(context);
+        @SuppressLint("InflateParams")
+        View customDialogView = inflater.inflate(R.layout.dialog_score_view, null);
+        TextView tvDialogTitle = customDialogView.findViewById(R.id.dialogTitle);
+        tvDialogTitle.setText(currentExercise.getExercise().getName());
+        TextView tvEmpty = customDialogView.findViewById(R.id.tvEmpty);
+        tvEmpty.setVisibility(View.GONE);
+        ListView lvScores = customDialogView.findViewById(R.id.lvScores);
+
+        //Recojo otras marcas de este ejercicio
+        ScoreClient client = new ScoreClient();
+        client.getScore(SharedPrefs.getString(context, "id", ""), currentExercise.getExercise().getExerciseId(), new ScoreClient.GetScoreCallback() {
+            @Override
+            public void onScorePosted(List<Score> scores) {
+                if(scores==null||scores.isEmpty())
+                    tvEmpty.setVisibility(View.VISIBLE);
+                else {
+                    //Crear adaptador y pasar a lvScores
+                    lvScores.setAdapter(new ScoreAdapter(context, scores));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                tvEmpty.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+
+        new AlertDialog.Builder(context)
+                .setView(customDialogView)
+                .show();
+    }
+
 }

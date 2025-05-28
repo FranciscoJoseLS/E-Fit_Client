@@ -81,7 +81,7 @@ public class RoutineClient {
 
         @Override
         protected void onPostExecute(List<Routine> routine) {
-            if (!routine.isEmpty()) {
+            if (routine != null) {
                 callback.onRoutinesReceived(routine);
             } else {
                 callback.onError(new Exception("Error al cargar rutinas"));

@@ -13,8 +13,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:backgroundTint="@color/green"
         app:cardCornerRadius="8dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/background"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:elevation="0dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,6 +39,26 @@
                 android:textColor="@color/black_0"
                 android:layout_marginBottom="24dp"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/account" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_email"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
             <EditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
@@ -41,6 +69,25 @@
                 android:inputType="textEmailAddress"
                 android:padding="10dp"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/padlock" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_password"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
             <EditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"

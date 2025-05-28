@@ -27,10 +27,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item){
-        if(item.getItemId()==R.id.itemMenuHome){
-            startActivity(new Intent(this, MainActivity.class));
-            return true;
-        }else if(item.getItemId()==R.id.itemUser){
+        if(item.getItemId()==R.id.itemUser){
             startActivity(new Intent(this, UserFormActivity.class));
             return true;
         }else if(item.getItemId()==R.id.itemExercise){

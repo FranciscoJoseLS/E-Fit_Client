@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="20dp"
-    android:background="@color/green"
+    android:background="@drawable/background_gym"
     android:orientation="vertical"
     tools:context=".ui.exercise.ExerciseList">
 
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/exercises"
-        android:textColor="@color/black_1"
+        android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
         android:padding="16dp"
@@ -57,6 +57,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="40dp"
+        android:textColor="@color/red"
+        android:textStyle="bold"
         android:text="@string/_loading"/>
 
     <ListView

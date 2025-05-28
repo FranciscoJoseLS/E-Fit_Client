@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="20dp"
-    android:background="@color/green"
+    android:background="@drawable/background_gym_1"
     android:orientation="vertical"
     tools:context=".ui.exercise.ExerciseList">
 
@@ -27,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="40dp"
+        android:textColor="@color/black_3"
         android:text="@string/_loading"/>
 
     <ListView
@@ -38,5 +39,15 @@
         android:layout_marginTop="16dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="10dp" />
+
+    <Button
+        android:id="@+id/btnNew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_button"
+        android:text="@string/_new"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 
 </LinearLayout>

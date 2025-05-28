@@ -62,24 +62,28 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(){
+        btnLogin.setVisibility(View.GONE);
         String mail=etEmail.getText().toString();
         String password=etPassword.getText().toString();
         Context c= this;
 
-        if(mail.isEmpty())
+        if(mail.isEmpty()){
+            btnLogin.setVisibility(View.VISIBLE);
             tvError.setText(getString(R.string.invalid_empty_username));
-        else if(password.isEmpty())
+        } else if(password.isEmpty()){
+            btnLogin.setVisibility(View.VISIBLE);
             tvError.setText(getString(R.string.invalid_empty_password));
-        else {
+        } else {
             client.getUser("mail", mail, new UserClient.UserCallback() {
                 @Override
                 public void onUserReceived(User user) {
                     if (password.equalsIgnoreCase(user.getPassword())) {
                         // Almacenar el id en shared preference
                         SharedPrefs.saveString(c, "id", String.valueOf(user.getUserId()));
-                        //  Ir al lisao de ejercicios
+                        //  Ir al listado de ejercicios
                         startActivity(new Intent(c, RoutineList.class));
                     } else {
+                        btnLogin.setVisibility(View.VISIBLE);
                         tvError.setText(getString(R.string.invalid_password));
                     }
                 }
@@ -89,6 +93,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(Exception e) {
+                    btnLogin.setVisibility(View.VISIBLE);
                     tvError.setText(getString(R.string.invalid_username));
                 }
             });

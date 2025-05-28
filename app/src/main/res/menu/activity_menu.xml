@@ -2,10 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/itemMenuHome"
-        android:title="@string/home"/>
-
-    <item
         android:id="@+id/itemExercise"
         android:title="@string/exercises"/>
 
