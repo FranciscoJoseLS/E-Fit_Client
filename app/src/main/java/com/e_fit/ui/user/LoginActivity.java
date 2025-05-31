@@ -99,15 +99,6 @@ public class LoginActivity extends AppCompatActivity {
             });
 
         }
-
-        checkError();
-    }
-
-    public void checkError() {
-        if (tvError.getText().toString().trim().isEmpty())
-            tvError.setVisibility(View.GONE);
-        else
-            tvError.setVisibility(View.VISIBLE);
     }
 
 }

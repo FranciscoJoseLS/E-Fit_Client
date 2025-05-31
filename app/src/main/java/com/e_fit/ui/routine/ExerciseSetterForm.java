@@ -40,6 +40,7 @@ public class ExerciseSetterForm extends AppCompatActivity {
     private ArrayList<Exercise> selectedExercises;
     private Routine routine;
     private ExerciseRoutineClient client;
+    private int uploadExercises;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,7 @@ public class ExerciseSetterForm extends AppCompatActivity {
             super.onBackPressed();
         });
         client = new ExerciseRoutineClient();
-
+        uploadExercises = 0;
         loadData();
     }
 
@@ -127,6 +128,7 @@ public class ExerciseSetterForm extends AppCompatActivity {
                         .filter(e->e.getName().equals(exerciseName))
                         .findFirst().orElse(null);
 
+                btnCreate.setVisibility(View.GONE);
                 client.postExerciseRoutine(
                         exercise.getExerciseId(),
                         routine.getRoutineId().toString(),
@@ -140,9 +142,7 @@ public class ExerciseSetterForm extends AppCompatActivity {
                             @Override
                             public void onExerciseRoutinePosted(boolean success) {
                                 if (success) {
-                                    Toast.makeText(ExerciseSetterForm.this, "El ejercicio se asoció correctamente a esta rutina", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(ExerciseSetterForm.this, RoutineList.class));
-                                    finish();
+                                    redirect(numberOfSets);
                                 } else {
                                     Toast.makeText(ExerciseSetterForm.this, "No se pudo asociar el ejercicio a esta rutina", Toast.LENGTH_SHORT).show();
                                 }
@@ -151,6 +151,7 @@ public class ExerciseSetterForm extends AppCompatActivity {
                             @Override
                             public void onError(Exception e) {
                                 Toast.makeText(ExerciseSetterForm.this, "No se pudo asociar el ejercicio a esta rutina", Toast.LENGTH_SHORT).show();
+                                btnCreate.setVisibility(View.VISIBLE);
                                 Log.e("ExerciseSetterForm", "Error posting exercise routine: " + e.getMessage(), e);
                             }
                         }
@@ -179,5 +180,13 @@ public class ExerciseSetterForm extends AppCompatActivity {
             }
 
         return Long.valueOf(minutes * 60 + seconds);
+    }
+
+    private void redirect(int nSets){
+        if(nSets == ++uploadExercises) {
+            Toast.makeText(ExerciseSetterForm.this, "El ejercicio se asoció correctamente a esta rutina", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(ExerciseSetterForm.this, RoutineList.class));
+            finish();
+        }
     }
 }
